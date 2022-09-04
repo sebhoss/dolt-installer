@@ -115,7 +115,7 @@ runs:
         bin_extension=
         case ${{ runner.os }} in
           Windows)
-            7z e "${DOWNLOAD_BIN}" -o "${DOWNLOAD_FOLDER}"
+            7z x "${DOWNLOAD_BIN}"
             bin_extension='.exe'
             ;;
           *)
