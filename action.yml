@@ -1,0 +1,132 @@
+# SPDX-FileCopyrightText: The dolt-installer Authors
+# SPDX-License-Identifier: 0BSD
+
+name: dolt-installer
+author: sebhoss
+description: Installs dolt and includes it in the PATH of a GitHub runner
+branding:
+  icon: package
+  color: green
+inputs:
+  version:
+    description: dolt release version to be installed
+    required: false
+    default: latest
+  install-directory:
+    description: Directory for the dolt binaries
+    required: false
+    default: '$HOME/.dolt'
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        #!/bin/bash
+
+        INSTALL_FOLDER="${{ inputs.install-directory }}"
+        GITHUB_ORGA='https://github.com/dolthub/dolt'
+        DOWNLOAD_URL="${GITHUB_ORGA}/releases/download"
+        RELEASE_URL="${GITHUB_ORGA}/releases/latest"
+        JSON_HEADER='Accept: application/json'
+        BINARY_NAME='dolt'
+
+        case ${{ runner.os }} in
+          Linux)
+            case ${{ runner.arch }} in
+              X64)
+                operating_system='linux'
+                processor_architecture='amd64'
+                file_extension='tar.gz'
+                ;;
+
+              ARM64)
+                operating_system='linux'
+                processor_architecture='arm64'
+                file_extension='tar.gz'
+                ;;
+
+              *)
+                echo "unsupported architecture ${{ runner.os }}/${{ runner.arch }}"
+                exit 1
+                ;;
+            esac
+            ;;
+
+          macOS)
+            case ${{ runner.arch }} in
+              X64)
+                operating_system='darwin'
+                processor_architecture='amd64'
+                file_extension='tar.gz'
+                ;;
+
+              ARM64)
+                operating_system='darwin'
+                processor_architecture='arm64'
+                file_extension='tar.gz'
+                ;;
+
+              *)
+                echo "unsupported architecture ${{ runner.os }}/${{ runner.arch }}"
+                exit 1
+                ;;
+            esac
+            ;;
+
+          Windows)
+            case ${{ runner.arch }} in
+              X64)
+                operating_system='windows'
+                processor_architecture='amd64'
+                file_extension='zip'
+                ;;
+              *)
+                echo "unsupported architecture ${{ runner.os }}/${{ runner.arch }}"
+                exit 1
+                ;;
+            esac
+            ;;
+
+          *)
+            echo "unsupported architecture ${{ runner.os }}/${{ runner.arch }}"
+            exit 1
+            ;;
+        esac
+
+        echo 'fetching latest release from github'
+        LATEST_TAG=$(curl --silent --location --header "${JSON_HEADER}" ${RELEASE_URL} | jq -r '.tag_name')
+        LATEST_VERSION="${LATEST_TAG:1}"
+        LATEST_ARCHIVE="${BINARY_NAME}-${operating_system}-${processor_architecture}.${file_extension}"
+        echo "latest version is ${LATEST_VERSION}"
+        echo "installing into ${INSTALL_FOLDER}"
+
+        LATEST_BIN_LINK="${DOWNLOAD_URL}/${LATEST_TAG}/${LATEST_ARCHIVE}"
+        echo "downloading binary from ${LATEST_BIN_LINK}"
+        DOWNLOAD_FOLDER=$(mktemp --directory)
+        DOWNLOAD_BIN="${DOWNLOAD_FOLDER}/${LATEST_ARCHIVE}"
+        echo "saving downloads in ${DOWNLOAD_FOLDER}"
+
+        curl --silent --location "${LATEST_BIN_LINK}" --output "${DOWNLOAD_BIN}"
+        echo 'latest binary downloaded'
+
+        echo 'moving binary'
+        mkdir --parents "${INSTALL_FOLDER}"
+        
+        case ${{ runner.os }} in
+          Windows)
+            7z x -spe "${DOWNLOAD_BIN}" "${DOWNLOAD_FOLDER}"
+            ;;
+          *)
+            tar xz --file="${DOWNLOAD_BIN}" --directory="${DOWNLOAD_FOLDER}" --strip-components=1
+            ;;
+        esac
+
+        cp "${DOWNLOAD_FOLDER}/bin/${BINARY_NAME}*" "${INSTALL_FOLDER}/"
+        rm --recursive --force "${DOWNLOAD_FOLDER}"
+        echo 'latest version installed'
+    - if: runner.os == 'Linux' || runner.os == 'macOS'
+      shell: bash
+      run:  echo "${{ inputs.install-directory }}" >> $GITHUB_PATH
+    - if: runner.os == 'Windows'
+      shell: pwsh
+      run:  echo "${{ inputs.install-directory }}" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
