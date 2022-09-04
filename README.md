@@ -5,14 +5,12 @@ SPDX-License-Identifier: 0BSD
 
 # dolt-installer GitHub Action
 
-This action installs `dolt` into the `PATH` of a GitHub Actions runner.
-
-For available `dolt` releases, see https://github.com/dolthub/dolt/releases/.
+This action installs [dolt](https://github.com/dolthub/dolt) into the `PATH` of a GitHub Actions runner.
 
 ## Usage
 
-This action supports GitHub-provided Linux, macOS and Windows runners. Self-hosted runners are not tested and may or may
-not work correctly. In order to use this action in your workflow, add the following snippet to the YAML file of the workflow:
+This action supports GitHub-provided Linux, macOS and Windows runners. Self-hosted runners are not tested and may not
+work correctly. In order to use this action in your workflow, add the following snippet to the YAML file of the workflow:
 
 ```yaml
 uses: sebhoss/dolt-installer@main
