@@ -116,6 +116,7 @@ runs:
         case ${{ runner.os }} in
           Windows)
             7z x "${DOWNLOAD_BIN}"
+            ls -la "${DOWNLOAD_FOLDER}"
             bin_extension='.exe'
             ;;
           *)
