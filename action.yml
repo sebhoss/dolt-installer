@@ -102,7 +102,7 @@ runs:
 
         LATEST_BIN_LINK="${DOWNLOAD_URL}/${LATEST_TAG}/${LATEST_ARCHIVE}"
         echo "downloading binary from ${LATEST_BIN_LINK}"
-        DOWNLOAD_FOLDER=${{ RUNNER_TEMP }}
+        DOWNLOAD_FOLDER=${{ runner.temp }}
         DOWNLOAD_BIN="${DOWNLOAD_FOLDER}/${LATEST_ARCHIVE}"
         echo "saving downloads in ${DOWNLOAD_FOLDER}"
 
