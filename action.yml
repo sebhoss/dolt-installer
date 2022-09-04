@@ -112,16 +112,18 @@ runs:
         echo 'moving binary'
         mkdir --parents "${INSTALL_FOLDER}"
         
+        bin_extension=
         case ${{ runner.os }} in
           Windows)
             7z x -spe "${DOWNLOAD_BIN}" "${DOWNLOAD_FOLDER}"
+            bin_extension='.exe'
             ;;
           *)
             tar xz --file="${DOWNLOAD_BIN}" --directory="${DOWNLOAD_FOLDER}" --strip-components=1
             ;;
         esac
 
-        cp "${DOWNLOAD_FOLDER}/bin/${BINARY_NAME}*" "${INSTALL_FOLDER}/"
+        cp "${DOWNLOAD_FOLDER}/bin/${BINARY_NAME}${bin_extension}" "${INSTALL_FOLDER}/${BINARY_NAME}${bin_extension}"
         rm --recursive --force "${DOWNLOAD_FOLDER}"
         echo 'latest version installed'
     - if: runner.os == 'Linux' || runner.os == 'macOS'
