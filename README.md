@@ -13,7 +13,7 @@ This action supports GitHub-provided Linux, macOS and Windows runners. Self-host
 work correctly. In order to use this action in your workflow, add the following snippet to the YAML file of the workflow:
 
 ```yaml
-uses: sebhoss/dolt-installer@main
+uses: sebhoss/dolt-installer@v1
 with:
   version: latest # optional
 ```
@@ -26,7 +26,7 @@ jobs:
     name: Install and verify Dolt
     steps:
       - name: Install Dolt
-        uses: sebhoss/dolt-installer@main
+        uses: sebhoss/dolt-installer@v1
         with:
           version: '0.40.32'
       - name: Verify Dolt Installation
