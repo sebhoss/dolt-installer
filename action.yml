@@ -114,16 +114,15 @@ runs:
         bin_extension=
         case ${{ runner.os }} in
           Windows)
-            7z x -spe "${DOWNLOAD_BIN}" -o"${DOWNLOAD_FOLDER}"
-            ls -la "${DOWNLOAD_FOLDER}"
-            bin_extension='.exe'
+            7z e "${DOWNLOAD_BIN}" -o"${DOWNLOAD_FOLDER}"
+            mv "${DOWNLOAD_FOLDER}/${BINARY_NAME}.exe" "${INSTALL_FOLDER}/${BINARY_NAME}.exe"
             ;;
           *)
             tar xz --file="${DOWNLOAD_BIN}" --directory="${DOWNLOAD_FOLDER}" --strip-components=1
+            mv "${DOWNLOAD_FOLDER}/bin/${BINARY_NAME}" "${INSTALL_FOLDER}/${BINARY_NAME}"
             ;;
         esac
 
-        mv "${DOWNLOAD_FOLDER}/bin/${BINARY_NAME}${bin_extension}" "${INSTALL_FOLDER}/${BINARY_NAME}${bin_extension}"
         rm -rf "${DOWNLOAD_FOLDER}"
         echo 'latest version installed'
     - if: runner.os == 'Linux' || runner.os == 'macOS'
