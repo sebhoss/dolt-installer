@@ -123,7 +123,7 @@ runs:
             ;;
         esac
 
-        cp "${DOWNLOAD_FOLDER}/bin/${BINARY_NAME}${bin_extension}" "${INSTALL_FOLDER}/${BINARY_NAME}${bin_extension}"
+        mv "${DOWNLOAD_FOLDER}/bin/${BINARY_NAME}${bin_extension}" "${INSTALL_FOLDER}/${BINARY_NAME}${bin_extension}"
         rm -rf "${DOWNLOAD_FOLDER}"
         echo 'latest version installed'
     - if: runner.os == 'Linux' || runner.os == 'macOS'
