@@ -80,3 +80,29 @@ jobs:
         shell: bash
         run: |
           [[ -z $(git diff --stat) ]]
+  test-using-custom-prefixed-version:
+    name: Custom Prefixed Version on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+          - windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Dolt
+        uses: ./
+        with:
+          version: "v0.40.30"
+      - name: Verify Installation
+        run: dolt version
+      - name: Check Version
+        shell: bash
+        run: |
+          [[ $(dolt version | grep -c '0.40.30') -eq 1 ]]
+      - name: Check root directory
+        shell: bash
+        run: |
+          [[ -z $(git diff --stat) ]]
