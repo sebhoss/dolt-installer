@@ -12,6 +12,7 @@ jobs:
     name: Using Defaults on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os:
           - macos-latest
@@ -36,6 +37,7 @@ jobs:
     name: Custom Installer Directory on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os:
           - macos-latest
