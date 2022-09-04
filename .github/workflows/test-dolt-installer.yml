@@ -106,3 +106,30 @@ jobs:
         shell: bash
         run: |
           [[ -z $(git diff --stat) ]]
+  test-existing-release:
+    name: Released Version on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+          - windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Dolt
+        uses: sebhoss/dolt-installer@v1
+        with:
+          version: "v0.40.30"
+          install-directory: "$HOME/.dolttest"
+      - name: Verify Installation
+        run: dolt version
+      - name: Check Version
+        shell: bash
+        run: |
+          [[ $(dolt version | grep -c '0.40.30') -eq 1 ]]
+      - name: Check root directory
+        shell: bash
+        run: |
+          [[ -z $(git diff --stat) ]]
