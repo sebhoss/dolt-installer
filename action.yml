@@ -98,24 +98,23 @@ runs:
         LATEST_VERSION="${LATEST_TAG:1}"
         LATEST_ARCHIVE="${BINARY_NAME}-${operating_system}-${processor_architecture}.${file_extension}"
         echo "latest version is ${LATEST_VERSION}"
-        echo "installing into ${INSTALL_FOLDER}"
 
         LATEST_BIN_LINK="${DOWNLOAD_URL}/${LATEST_TAG}/${LATEST_ARCHIVE}"
         echo "downloading binary from ${LATEST_BIN_LINK}"
-        DOWNLOAD_FOLDER=${{ runner.temp }}
+        DOWNLOAD_FOLDER=$(mktemp -d)
         DOWNLOAD_BIN="${DOWNLOAD_FOLDER}/${LATEST_ARCHIVE}"
         echo "saving downloads in ${DOWNLOAD_FOLDER}"
 
         curl --silent --location "${LATEST_BIN_LINK}" --output "${DOWNLOAD_BIN}"
         echo 'latest binary downloaded'
 
-        echo 'moving binary'
+        echo "installing into ${INSTALL_FOLDER}"
         mkdir -p "${INSTALL_FOLDER}"
         
         bin_extension=
         case ${{ runner.os }} in
           Windows)
-            7z x -spe "${DOWNLOAD_BIN}"
+            7z x "${DOWNLOAD_BIN}" -o"${DOWNLOAD_FOLDER}"
             ls -la "${DOWNLOAD_FOLDER}"
             bin_extension='.exe'
             ;;
