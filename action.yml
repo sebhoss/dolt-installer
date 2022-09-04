@@ -24,6 +24,8 @@ runs:
         #!/bin/bash
 
         INSTALL_FOLDER="${{ inputs.install-directory }}"
+        VERSION="${{ inputs.version }}"
+        
         GITHUB_ORGA='https://github.com/dolthub/dolt'
         DOWNLOAD_URL="${GITHUB_ORGA}/releases/download"
         RELEASE_URL="${GITHUB_ORGA}/releases/latest"
@@ -92,17 +94,23 @@ runs:
             exit 1
             ;;
         esac
+        
+        ARCHIVE_NAME="${BINARY_NAME}-${operating_system}-${processor_architecture}.${file_extension}"
 
-        echo 'fetching latest release from github'
-        LATEST_TAG=$(curl --silent --location --header "${JSON_HEADER}" ${RELEASE_URL} | jq -r '.tag_name')
-        LATEST_VERSION="${LATEST_TAG:1}"
-        LATEST_ARCHIVE="${BINARY_NAME}-${operating_system}-${processor_architecture}.${file_extension}"
-        echo "latest version is ${LATEST_VERSION}"
+        if [[ "${VERSION}" == 'latest' ]]; then
+          echo 'fetching latest release from github'
+          version_tag=$(curl --silent --location --header "${JSON_HEADER}" ${RELEASE_URL} | jq -r '.tag_name')
+          echo "latest version is ${version_tag}"
+        else
+          [[ "${VERSION}" == v* ]] && version_tag="${VERSION}"
+          [[ "${VERSION}" == v* ]] || version_tag="v${VERSION}"
+        fi
 
-        LATEST_BIN_LINK="${DOWNLOAD_URL}/${LATEST_TAG}/${LATEST_ARCHIVE}"
+
+        LATEST_BIN_LINK="${DOWNLOAD_URL}/${version_tag}/${ARCHIVE_NAME}"
         echo "downloading binary from ${LATEST_BIN_LINK}"
         DOWNLOAD_FOLDER=$(mktemp -d)
-        DOWNLOAD_BIN="${DOWNLOAD_FOLDER}/${LATEST_ARCHIVE}"
+        DOWNLOAD_BIN="${DOWNLOAD_FOLDER}/${ARCHIVE_NAME}"
         echo "saving downloads in ${DOWNLOAD_FOLDER}"
 
         curl --silent --location "${LATEST_BIN_LINK}" --output "${DOWNLOAD_BIN}"
@@ -111,7 +119,6 @@ runs:
         echo "installing into ${INSTALL_FOLDER}"
         mkdir -p "${INSTALL_FOLDER}"
         
-        bin_extension=
         case ${{ runner.os }} in
           Windows)
             7z e "${DOWNLOAD_BIN}" -o"${DOWNLOAD_FOLDER}"
@@ -124,7 +131,7 @@ runs:
         esac
 
         rm -rf "${DOWNLOAD_FOLDER}"
-        echo 'latest version installed'
+        echo "dolt version ${version_tag} installed"
     - if: runner.os == 'Linux' || runner.os == 'macOS'
       shell: bash
       run:  echo "${{ inputs.install-directory }}" >> $GITHUB_PATH

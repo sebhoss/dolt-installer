@@ -64,3 +64,34 @@ jobs:
           else
             exit 0
           fi
+  test-using-custom-version:
+    name: Custom Version on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+          - windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Dolt
+        uses: ./
+        with:
+          version: "0.40.30"
+      - name: Verify Installation
+        run: dolt version
+      - name: Check Version
+        shell: bash
+        run: |
+          [[ dolt version | grep -q '0.40.30' ]]
+      - name: Check root directory
+        shell: bash
+        run: |
+          if [[ $(git diff --stat) != '' ]]; then
+            echo 'should be clean'
+            exit 1
+          else
+            exit 0
+          fi
