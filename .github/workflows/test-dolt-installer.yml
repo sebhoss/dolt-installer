@@ -1,12 +1,12 @@
-# SPDX-FileCopyrightText: The dolt-installer Authors
+# SPDX-FileCopyrightText: The Dolt Installer GitHub Action Authors
 # SPDX-License-Identifier: 0BSD
 
 name: test-dolt-installer
 on:
-  pull_request:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 jobs:
   test-using-defaults:
     name: Using Defaults on ${{ matrix.os }}

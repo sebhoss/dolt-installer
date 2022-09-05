@@ -1,0 +1,10 @@
+<component name="CopyrightManager">
+  <settings default="dolt-installer">
+    <module2copyright>
+      <element module="Project Files" copyright="dolt-installer" />
+    </module2copyright>
+    <LanguageOptions name="JAVA">
+      <option name="addBlankBefore" value="true" />
+    </LanguageOptions>
+  </settings>
+</component>
