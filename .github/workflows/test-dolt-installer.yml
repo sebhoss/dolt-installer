@@ -19,7 +19,7 @@ jobs:
           - ubuntu-latest
           - windows-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install Dolt
       uses: ./
     - name: Verify Installation
@@ -39,7 +39,7 @@ jobs:
           - ubuntu-latest
           - windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Dolt
         uses: ./
         with:
@@ -65,7 +65,7 @@ jobs:
           - ubuntu-latest
           - windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Dolt
         uses: ./
         with:
@@ -91,7 +91,7 @@ jobs:
           - ubuntu-latest
           - windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Dolt
         uses: ./
         with:
@@ -117,7 +117,7 @@ jobs:
           - ubuntu-latest
           - windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Dolt
         uses: sebhoss/dolt-installer@v1
         with:
